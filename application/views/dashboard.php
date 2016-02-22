@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Admin Dashboard</title>
+		<title>Dashboard</title>
 
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -12,16 +12,13 @@
 	</head>
 	<body>
 		<div class='container'>
-			<h3>
-				Manage Users
-				<a href='/users/new' class='btn btn-primary pull-right' role='button'>Add new</a>
-			</h3>
+			<h3>All Users</h3>
 
 			<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
 						<?php
-						$format = array('ID','Name','Email','Date Added','User Level','Actions');
+						$format = array('ID','Name','Email','Date Added','User Level');
 						foreach ($format as $value){ ?>
 							<th><?= $value ?></th>
 						<?php } ?>
@@ -42,12 +39,6 @@
 							<!-- date('M t, Y',$arr['created_at']) -->
 						</td>
 						<td><?=$arr['user_level']?></td>
-						<!-- //==============> Add Actions Here <=========== -->
-						<td>
-							<a class='action' href='edit'>edit</a>
-							<a class='action' href='remove'>remove</a>
-						</td>
-						<!-- //============================================= -->
 					</tr>
 					<?php } ?>
 				</tbody>

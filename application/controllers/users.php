@@ -7,11 +7,6 @@ class users extends CI_Controller {
 		$this->load->model('user_model');
 	}
 
-	public function index(){
-		$this->load->view('login_page');
-	}
-
-
 	public function register(){
 		if($this->user_model->add($this->input->post())){
 			// auto login
@@ -24,7 +19,11 @@ class users extends CI_Controller {
 				'is_logged_in' => TRUE
 				);
 			$this->session->set_userdata($user_data);
-			redirect("profile");
+			if($user['user_level']){
+				redirect("dashboard/admin");
+			} else {
+				redirect("dashboard");
+			}
 		}
 		$this->session->set_flashdata("reg_error", TRUE); 	// errors
 		redirect("register");
@@ -69,34 +68,65 @@ class users extends CI_Controller {
 		$password = md5($this->input->post('password'));
 		if($email && $password){
 			$user = $this->user_model->get_by_email($email);
-
 			if($user && $user['password'] == $password){
 				$user_data = array(
 					'user_id' => $user['id'],
 					'user_email' => $user['email'],
 					'user_first_name' => $user['first_name'],
 					'user_last_name' => $user['last_name'],
+					'user_level' => $user['user_level'],
 					'is_logged_in' => TRUE
 					);
 
 				$this->session->set_userdata($user_data);
-				redirect("profile");
+				if($user['user_level']){
+					redirect("dashboard/admin");
+				} else {
+					redirect("dashboard");
+				}
 			}
 		}
 		$this->session->set_flashdata("login_error", TRUE);
 		redirect("login");
 	}
 
+	public function logout(){
+		$this->session->sess_destroy();
+		redirect("/");
+	}
+
+	public function admin_dashboard(){
+		$users = $this->user_model->get_all();
+		$this->load->view('nav_sgnin');
+		if($this->session->userdata('user_level')){
+			$this->load->view('admin_dashboard', array('users' => $users));
+		} else {
+			$this->load->view('dashboard', array('users' => $users));
+		}
+	}
+
+	public function dashboard(){
+		$users = $this->user_model->get_all();
+		$this->load->view('nav_sgnin');
+		$this->load->view('dashboard', array('users' => $users));
+	}
+
 	public function profile(){
 		if($this->session->userdata('is_logged_in')){
+			$this->load->view('nav_sgnin');
 			$this->load->view('user_profile');
 		} else {
 			redirect("/");
 		}
 	}
 
-	public function logout(){
-		$this->session->sess_destroy();
-		redirect("/");
+	public function create_users (){
+		$this->load->view('nav_sgnin');
+		if($this->user_model->add($this->input->post())){
+			$this->load->view('admin_dashboard');
+		} else {
+			$this->load->view('new_user');
+		}
 	}
+
 }
